@@ -10,11 +10,15 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "georaster": "^1.6.0",
+    "georaster-layer-for-leaflet": "^3.10.0",
+    "leaflet": "^1.9.4",
     "maplibre-gl": "^4.7.1",
     "maplibre-react-components": "^0.1.8",
     "maplibre-theme": "^0.1.1",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "react-leaflet": "^4.2.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.11.1",
