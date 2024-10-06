@@ -1,6 +1,8 @@
 import React, { useEffect, useRef } from 'react';
 import { MapContainer, TileLayer } from 'react-leaflet';
 import GeoRaster from 'georaster';
+import parseGeoraster from 'georaster'; 
+import GeoRaster from 'georaster';
 import GeoRasterLayer from 'georaster-layer-for-leaflet';
 
 const GeoTiffMap = ({ geoTiffUrl }) => {
@@ -9,11 +11,12 @@ const GeoTiffMap = ({ geoTiffUrl }) => {
   useEffect(() => {
     const loadGeoTiff = async () => {
       // Fetch the GeoTIFF file
-      const response = await fetch(geoTiffUrl);
+      const response = await fetch('./01_2021_CO2_Seattle.tif');
       const arrayBuffer = await response.arrayBuffer();
 
       // Convert it to a GeoRaster
-      const geoRaster = await GeoRaster.load(arrayBuffer);
+      const geoRaster = await parseGeoraster(arrayBuffer);
+      const geo = await GeoRaster.l
 
       // Create a GeoRasterLayer
       const geoRasterLayer = new GeoRasterLayer({
