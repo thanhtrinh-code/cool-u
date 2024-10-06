@@ -319,7 +319,7 @@ function App() {
       </div>
       {openChat && <ChatBot />}
       <div
-        className="z-[1000] fixed bottom-5 right-5"
+        className="z-[1000] fixed bottom-10 right-10"
         onClick={() => setOpenChat((open) => !open)}
       >
         <button className="bg-green-600 text-white font-semibold py-2 px-4 rounded shadow hover:bg-green-700 transition duration-300 ease-in-out">

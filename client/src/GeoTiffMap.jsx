@@ -21,24 +21,27 @@ const ColorButtons = () => {
   const values = [0, 25, 50, 75, 100]; // Define the values for which you want to create buttons
 
   return (
-    <div className="flex space-x-4 p-4">
-      {values.map((value) => (
-        <button
-          key={value}
-          style={{
-            backgroundColor: getColorFromValue(value),
-            color: '#051f12',
-            padding: '10px 15px',
-            border: 'none',
-            borderRadius: '5px',
-            cursor: 'pointer',
-            transition: 'background-color 0.3s',
-          }}
-        >
-          {value}
-        </button>
-      ))}
-    </div>
+    <>
+      <div className="flex items-center space-x-4 py-4">
+        <label>CO₂ (metric tons/km²/month)</label>
+        {values.map((value) => (
+          <button
+            key={value}
+            style={{
+              backgroundColor: getColorFromValue(value),
+              color: '#051f12',
+              padding: '10px 15px',
+              border: 'none',
+              borderRadius: '5px',
+              cursor: 'pointer',
+              transition: 'background-color 0.3s',
+            }}
+          >
+            {value}
+          </button>
+        ))}
+      </div>
+    </>
   );
 };
 
