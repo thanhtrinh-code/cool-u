@@ -1,23 +1,110 @@
 // @ts-nocheck
 import 'maplibre-gl/dist/maplibre-gl.css';
 import GeoTiffMap from './GeoTiffMap';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import ChatBot from './ChatBot';
+
+const MapWithMonthSlider = ({ onMonthChange }) => {
+  const [selectedMonthIndex, setSelectedMonthIndex] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [intervalId, setIntervalId] = useState(null);
+
+  const handleSliderChange = (event) => {
+    const index = Number(event.target.value);
+    setSelectedMonthIndex(index);
+    onMonthChange(index);
+  };
+
+  const handlePlay = () => {
+    if (!isPlaying) {
+      setIsPlaying(true);
+      const id = setInterval(() => {
+        setSelectedMonthIndex((prevIndex) => {
+          const nextIndex = (prevIndex + 1) % 12;
+          onMonthChange(nextIndex);
+          return nextIndex;
+        });
+      }, 2000);
+      setIntervalId(id);
+    }
+  };
+
+  const handlePause = () => {
+    setIsPlaying(false);
+    clearInterval(intervalId);
+  };
+
+  useEffect(() => {
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [intervalId]);
+
+  return (
+    <div className="bg-white p-6 rounded-lg shadow-lg">
+      <div className="mb-4">
+        <input
+          type="range"
+          min="0"
+          max="11"
+          value={selectedMonthIndex}
+          onChange={handleSliderChange}
+          className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+        />
+      </div>
+
+      <div className="flex justify-between text-sm text-gray-600">
+        <span>January</span>
+        <span>December</span>
+      </div>
+
+      <div className="flex justify-center mt-4">
+        {isPlaying ? (
+          <button
+            onClick={handlePause}
+            className="bg-red-500 text-white px-4 py-2 rounded"
+          >
+            Pause
+          </button>
+        ) : (
+          <button
+            onClick={handlePlay}
+            className="bg-green-500 text-white px-4 py-2 rounded"
+          >
+            Play
+          </button>
+        )}
+      </div>
+    </div>
+  );
+};
+
+const generateTiffUrl = (monthIndex) => {
+  const year = 2021;
+  const month = String(monthIndex + 1).padStart(2, '0');
+  return `./${year}${month}.tif`;
+};
+
 function App() {
+  const [selectedTiffUrl, setSelectedTiffUrl] = useState(generateTiffUrl(0));
   const [openChat, setOpenChat] = useState(false);
   const [locations, setLocations] = useState([42.6526, -73.7562]);
   const [loading, setLoading] = useState(false);
   const [clickLocateMe, setClickLocateMe] = useState(false);
   const [country, setCountry] = useState('');
 
+  const handleMonthChange = (index) => {
+    setSelectedTiffUrl(generateTiffUrl(index));
+  };
+
   function toggleMenu() {
     const menu = document.querySelector('#mobile-menu');
     menu.classList.toggle('hidden');
   }
 
-  function handleLocateUser (e) {
+  function handleLocateUser(e) {
     e.preventDefault();
-    if ("geolocation" in navigator) {
+    if ('geolocation' in navigator) {
       setLoading(true);
       setClickLocateMe(false);
       navigator.geolocation.getCurrentPosition(
@@ -33,11 +120,8 @@ function App() {
         }
       );
     } else {
-      console.log("Geolocation is not supported by your browser");
+      console.log('Geolocation is not supported by your browser');
     }
-  }
-  function handleClickEnterCountry () {
-
   }
   return (
     <>
@@ -54,22 +138,23 @@ function App() {
                 </a>
               </div>
             </div>
-            <div className='md:flex items-center gap-2'>
-              <button onClick={handleLocateUser}
-                className="outline-none font-medium px-2 py-2 text-white bg-green-500 rounded hover:bg-green-400 transition duration-300"
-              >
-                {loading ? "Loading..." : "Locate Me"}
-              </button>
-              <input value={country} onChange={(e) => setCountry(e.target.value)}
-              className="py-2 px-2 text-black bg-gray-200 rounded focus:outline-none focus:border-green-500 transition duration-300"
-              placeholder="Search for a country..."
-              type="text"
-              autoComplete="off"
-              list="country-suggestions"
-              />
+            <div className="md:flex items-center gap-2">
               <button
+                onClick={handleLocateUser}
                 className="outline-none font-medium px-2 py-2 text-white bg-green-500 rounded hover:bg-green-400 transition duration-300"
               >
+                {loading ? 'Loading...' : 'Locate Me'}
+              </button>
+              <input
+                value={country}
+                onChange={(e) => setCountry(e.target.value)}
+                className="py-2 px-2 text-black bg-gray-200 rounded focus:outline-none focus:border-green-500 transition duration-300"
+                placeholder="Search for a country..."
+                type="text"
+                autoComplete="off"
+                list="country-suggestions"
+              />
+              <button className="outline-none font-medium px-2 py-2 text-white bg-green-500 rounded hover:bg-green-400 transition duration-300">
                 Enter
               </button>
             </div>
@@ -141,19 +226,24 @@ function App() {
 
       <div className="container mx-auto mt-8 px-4 max-w-6xl">
         <h1 className="text-3xl font-bold mb-4 text-center">
-          Get to know your neighborhood!
+          Get to know the CO2 emissions in your neighborhood!
         </h1>
-        <GeoTiffMap locations={locations} clickLocateMe={clickLocateMe}/>
+        <MapWithMonthSlider onMonthChange={handleMonthChange} />
+        <GeoTiffMap
+          locations={locations}
+          clickLocateMe={clickLocateMe}
+          geoTiffUrl={selectedTiffUrl}
+        />
       </div>
-      {openChat && <ChatBot/>
-
-      }
-      <div className="z-[1000] fixed bottom-5 right-5" onClick={() => setOpenChat(open => !open)}>
-            <button className="bg-blue-600 text-white font-semibold py-2 px-4 rounded shadow hover:bg-blue-700 transition duration-300 ease-in-out">
-                {!openChat ? "ChatBot" : "Close"}
-            </button>
+      {openChat && <ChatBot />}
+      <div
+        className="z-[1000] fixed bottom-5 right-5"
+        onClick={() => setOpenChat((open) => !open)}
+      >
+        <button className="bg-blue-600 text-white font-semibold py-2 px-4 rounded shadow hover:bg-blue-700 transition duration-300 ease-in-out">
+          {!openChat ? 'ChatBot' : 'Close'}
+        </button>
       </div>
-      
     </>
   );
 }
