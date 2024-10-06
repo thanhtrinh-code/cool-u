@@ -257,7 +257,7 @@ function App() {
         className="z-[1000] fixed bottom-5 right-5"
         onClick={() => setOpenChat((open) => !open)}
       >
-        <button className="bg-blue-600 text-white font-semibold py-2 px-4 rounded shadow hover:bg-blue-700 transition duration-300 ease-in-out">
+        <button className="bg-green-600 text-white font-semibold py-2 px-4 rounded shadow hover:bg-green-700 transition duration-300 ease-in-out">
           {!openChat ? 'Cool U Bot' : 'Close'}
         </button>
       </div>

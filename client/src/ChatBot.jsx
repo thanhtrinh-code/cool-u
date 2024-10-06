@@ -24,51 +24,46 @@ export default function ChatBot() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
   useEffect(() => {
-      scrollToBottom();
+    scrollToBottom();
   }, [messages]);
   const sendMessage = async (e) => {
     e.preventDefault();
     try {
       setIsLoading(true);
       const userMessage = {
-              message: message,
-                role: 'user'
-            }
-            const aiMessage = {
-                message: '...',  
-                role: 'assistant'
-            }
-            setMessages([
-                ...messages,       
-                userMessage,
-                aiMessage
-            ]);
-            setMessage('');
+        message: message,
+        role: 'user',
+      };
+      const aiMessage = {
+        message: '...',
+        role: 'assistant',
+      };
+      setMessages([...messages, userMessage, aiMessage]);
+      setMessage('');
 
-            const response = await fetch('http://localhost:3000/chatbot', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ message })
-            });
-            const data = await response.json();
-            
-            setMessages([
-                ...messages,
-                userMessage,
-                {
-                    role: 'assistant',
-                    message: data.response
-                }
-            ])
+      const response = await fetch('http://localhost:3000/chatbot', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message }),
+      });
+      const data = await response.json();
 
-        } catch (error) {
-            console.error(error);
-        }finally{
-            setIsLoading(false);
-        }
+      setMessages([
+        ...messages,
+        userMessage,
+        {
+          role: 'assistant',
+          message: data.response,
+        },
+      ]);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
     }
+  };
   return (
     <div className="fixed rounded-lg sm:top-[15rem] sm:right-[2rem] top-0 right-0 w-full h-full sm:w-[24rem] sm:h-[40rem] bg-white shadow-2xl z-[1000] flex flex-col">
       <div className="flex flex-col h-full overflow-y-auto p-4">
@@ -83,7 +78,7 @@ export default function ChatBot() {
               className={`rounded-lg px-4 py-2 ${
                 msg.role === 'assistant'
                   ? 'bg-gray-200 text-gray-800'
-                  : 'bg-blue-500 text-white'
+                  : 'bg-green-500 text-white'
               }`}
             >
               {msg.message}
@@ -97,7 +92,7 @@ export default function ChatBot() {
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           placeholder="Type a message..."
-          className="flex-1 px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="flex-1 px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500"
         />
         <button
           className="ml-2 px-4 py-2 bg-amber-300 rounded-full hover:bg-amber-400 transition duration-200"

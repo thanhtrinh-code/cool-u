@@ -62,24 +62,41 @@ const GeoTiffMap = ({ geoTiffUrl, locations, clickLocateMe }) => {
   }, [locations]); // Runs when locations state changes
 
   return (
-    <MapContainer
-      center={locations}
-      zoom={3.5}
-      style={{ height: '68vh', width: '100%' }}
-      ref={mapRef}
-    >
-      <TileLayer
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        attribution="&copy; <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors"
-      />
-      {clickLocateMe && (
-        <Marker position={locations}>
-          {' '}
-          {/* You can remove icon prop if using default */}
-          <Popup>A custom popup message can be displayed here.</Popup>
-        </Marker>
-      )}
-    </MapContainer>
+    <>
+      <style>
+        {`
+      .leaflet-popup-content {
+        width: 150px; /* Set your desired width */
+        max-width: 100%; /* Ensure it doesn't exceed the container */
+      }
+    `}
+      </style>
+      <MapContainer
+        center={locations}
+        zoom={3.5}
+        style={{ height: '68vh', width: '100%' }}
+        ref={mapRef}
+      >
+        <TileLayer
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution="&copy; <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors"
+        />
+        {clickLocateMe && (
+          <Marker position={locations}>
+            <Popup>
+              <div className="popup-content bg-white shadow-lg rounded-md max-w-xs">
+                <h4 className="text-md font-semibold text-green-800 text-center">
+                  U.S. CO2 Emission
+                </h4>
+                <h3 className="text-lg font-semibold text-green-600 text-center p-4">
+                  40
+                </h3>
+              </div>
+            </Popup>
+          </Marker>
+        )}
+      </MapContainer>
+    </>
   );
 };
 
