@@ -1,8 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { MapContainer, TileLayer } from 'react-leaflet';
-import GeoRaster from 'georaster';
 import parseGeoraster from 'georaster'; 
-import GeoRaster from 'georaster';
 import GeoRasterLayer from 'georaster-layer-for-leaflet';
 
 const GeoTiffMap = ({ geoTiffUrl }) => {
@@ -16,7 +14,6 @@ const GeoTiffMap = ({ geoTiffUrl }) => {
 
       // Convert it to a GeoRaster
       const geoRaster = await parseGeoraster(arrayBuffer);
-      const geo = await GeoRaster.l
 
       // Create a GeoRasterLayer
       const geoRasterLayer = new GeoRasterLayer({
