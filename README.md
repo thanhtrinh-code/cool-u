@@ -3,10 +3,10 @@
 ## How to run on local?
 
 Inside server folder, run:
-node index.js
+`node index.js`
 
 Inside client folder, run:
-npm run dev
+`npm run dev`
 
 Copy the tif files from google drive
 
