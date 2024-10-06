@@ -86,7 +86,7 @@ const GeoTiffMap = ({ geoTiffUrl, locations, clickLocateMe }) => {
             <Popup>
               <div className="popup-content bg-white shadow-lg rounded-md max-w-xs">
                 <h4 className="text-md font-semibold text-green-800 text-center">
-                  CO2 Emission
+                  U.S. CO2 Emission
                 </h4>
                 <h3 className="text-lg font-semibold text-green-600 text-center p-4">
                   40
