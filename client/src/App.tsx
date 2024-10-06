@@ -5,17 +5,56 @@ import { useState, useEffect } from 'react';
 import ChatBot from './ChatBot';
 
 const countries = [
-  'United States',
-  'Canada',
-  'Mexico',
-  'United Kingdom',
-  'Germany',
-  'France',
-  'Australia',
-  'India',
-  'China',
-  'Japan',
-  // Add more countries as needed
+  'Alabama',
+  'Alaska',
+  'Arizona',
+  'Arkansas',
+  'California',
+  'Colorado',
+  'Connecticut',
+  'Delaware',
+  'Florida',
+  'Georgia',
+  'Hawaii',
+  'Idaho',
+  'Illinois',
+  'Indiana',
+  'Iowa',
+  'Kansas',
+  'Kentucky',
+  'Louisiana',
+  'Maine',
+  'Maryland',
+  'Massachusetts',
+  'Michigan',
+  'Minnesota',
+  'Mississippi',
+  'Missouri',
+  'Montana',
+  'Nebraska',
+  'Nevada',
+  'New Hampshire',
+  'New Jersey',
+  'New Mexico',
+  'New York',
+  'North Carolina',
+  'North Dakota',
+  'Ohio',
+  'Oklahoma',
+  'Oregon',
+  'Pennsylvania',
+  'Rhode Island',
+  'South Carolina',
+  'South Dakota',
+  'Tennessee',
+  'Texas',
+  'Utah',
+  'Vermont',
+  'Virginia',
+  'Washington',
+  'West Virginia',
+  'Wisconsin',
+  'Wyoming',
 ];
 
 const MapWithMonthSlider = ({ onMonthChange }) => {
@@ -166,7 +205,7 @@ function App() {
                 className="py-2 px-4 m-2 text-black bg-gray-200 rounded focus:outline-none focus:border-green-500 transition duration-300"
               >
                 <option value="" disabled>
-                  Select a country
+                  Select a state
                 </option>
                 {countries.map((countryName, index) => (
                   <option key={index} value={countryName}>
@@ -258,7 +297,7 @@ function App() {
         onClick={() => setOpenChat((open) => !open)}
       >
         <button className="bg-green-600 text-white font-semibold py-2 px-4 rounded shadow hover:bg-green-700 transition duration-300 ease-in-out">
-          {!openChat ? 'Cool U Bot' : 'Close'}
+          {!openChat ? 'EcoScope Bot' : 'Close'}
         </button>
       </div>
     </>
