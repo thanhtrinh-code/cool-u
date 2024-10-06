@@ -72,7 +72,7 @@ const GeoTiffMap = ({ geoTiffUrl, locations, clickLocateMe }) => {
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution="&copy; <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors"
       />
-      {clickLocateMe && (
+      {!clickLocateMe && (
         <Marker position={locations}>
           {' '}
           {/* You can remove icon prop if using default */}

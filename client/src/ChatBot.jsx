@@ -34,12 +34,18 @@ export default function ChatBot() {
         e.preventDefault();
         try {
             setIsLoading(true);
+            const userMessage = {
+                message: message,
+                role: 'user'
+            }
+            const aiMessage = {
+                message: '...',  
+                role: 'assistant'
+            }
             setMessages([
                 ...messages,       
-                {
-                    message: message,  
-                    role: 'user'
-                }
+                userMessage,
+                aiMessage
             ]);
             setMessage('');
             const response = await fetch('http://localhost:3000/chatbot', {
@@ -50,7 +56,19 @@ export default function ChatBot() {
             body: JSON.stringify({ message })
             });
             const data = await response.json();
-            setMessages([...messages, { message: data.response.content, role: 'assistant' }]);
+
+            const updatedMessage = [
+                ...messages.slice(0, messages.length - 1),
+                
+            ];
+            setMessages([
+                ...messages,
+                userMessage,
+                {
+                    role: 'assistant',
+                    message: data.response
+                }
+            ])
 
         } catch (error) {
             console.error(error);
