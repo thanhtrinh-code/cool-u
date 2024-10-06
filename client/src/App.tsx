@@ -176,6 +176,24 @@ function App() {
       console.log('Geolocation is not supported by your browser');
     }
   }
+  async function handleData () {
+    const response = await fetch('http://localhost:3000/getCountryEmissions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          state: "South Carolina",
+         }),
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+  }
+  useEffect(() => {
+    handleData();
+  },[])
   return (
     <>
       <nav className="bg-white shadow-lg">
