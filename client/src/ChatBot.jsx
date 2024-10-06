@@ -48,6 +48,7 @@ export default function ChatBot() {
                 aiMessage
             ]);
             setMessage('');
+
             const response = await fetch('http://localhost:3000/chatbot', {
             method: 'POST',
             headers: {
@@ -56,11 +57,7 @@ export default function ChatBot() {
             body: JSON.stringify({ message })
             });
             const data = await response.json();
-
-            const updatedMessage = [
-                ...messages.slice(0, messages.length - 1),
-                
-            ];
+            
             setMessages([
                 ...messages,
                 userMessage,

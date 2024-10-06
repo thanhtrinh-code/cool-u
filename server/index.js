@@ -7,7 +7,7 @@ const puppeteer = require('puppeteer');
 const bodyParser = require('body-parser');
 
 const { initializeApp } = require('firebase/app');
-const { getFirestore, collection, doc, setDoc } = require('firebase/firestore');
+const { getFirestore, collection, doc, setDoc, getDoc } = require('firebase/firestore');
 const firebaseConfig = {
     apiKey: "AIzaSyBQtVK865PFTA0xyAkR8PSAs8CeVo3IIdI",
     authDomain: "cool-u.firebaseapp.com",
@@ -40,6 +40,11 @@ The health impacts of greenhouse gases, including air quality and respiratory di
 Mitigation strategies and solutions to reduce greenhouse gas emissions.
 The relationship between greenhouse gases and extreme weather events.
 Your goal is to deliver clear, evidence-based responses that educate users on these topics, while also providing practical advice on how individuals and communities can contribute to reducing greenhouse gas emissions for a healthier planet.
+`
+
+const CountryPrompt = `
+Provide the latitude and longitude of [country name] in the format and just return
+[latitude, longitude].
 `
 app.post('/chatbot', async (req, res) => {
     const message = req.body.message;
@@ -106,6 +111,37 @@ app.get('/loadCountry', async (req, res) => {
     });
     res.send('Welcome to the Greenhouse Gas Expert Chatbot API!');
 });
+
+app.get('/getCountryEmissions', async (req, res) => {
+    const country = req.body.country;
+    const countryRef = doc(collection(db, 'globalEmissions'), country);
+    const docSnapshot = await getDoc(countryRef);
+    if (!docSnapshot.exists()) {
+        res.send({
+            error: `Country ${country} not found.`
+        });
+        return;
+    }
+    const data = docSnapshot.data();
+
+    const completion = await openai.chat.completions.create({
+        model: "gpt-4o",
+        messages: [
+            { role: "system", content: CountryPrompt },
+            {
+                role: "user",
+                content: country,
+            },
+        ],
+    });
+
+    res.send({
+        emissions: data.emissions,
+        shareOfWorld: data.shareOfWorld,
+        position: JSON.parse(completion.choices[0].message.content),
+    });
+
+})
 
 
 
