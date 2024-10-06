@@ -1,9 +1,11 @@
 import React, { useEffect, useRef } from 'react';
 import { MapContainer, TileLayer } from 'react-leaflet';
-import parseGeoraster from 'georaster'; 
+import parseGeoraster from 'georaster';
 import GeoRasterLayer from 'georaster-layer-for-leaflet';
 
-const GeoTiffMap = ({ geoTiffUrl }) => {
+const initialCenter = [47.608013, -122.335167]; // seattle
+
+const GeoTiffMap = () => {
   const mapRef = useRef();
 
   useEffect(() => {
@@ -32,12 +34,12 @@ const GeoTiffMap = ({ geoTiffUrl }) => {
     };
 
     loadGeoTiff();
-  }, [geoTiffUrl]);
+  }, []);
 
   return (
     <MapContainer
-      center={[0, 0]} // Set your initial center
-      zoom={2} // Set your initial zoom level
+      center={initialCenter}
+      zoom={8}
       style={{ height: '100vh', width: '100%' }}
       ref={mapRef}
     >
