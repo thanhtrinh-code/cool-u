@@ -3,38 +3,57 @@ import { MapContainer, TileLayer } from 'react-leaflet';
 import parseGeoraster from 'georaster';
 import GeoRasterLayer from 'georaster-layer-for-leaflet';
 
-const initialCenter = [47.608013, -122.335167]; // seattle
+const initialCenter = [47.608013, -122.335167];
 
-const GeoTiffMap = () => {
+const getColorFromValue = (value) => {
+  if (value >= 0 && value <= 24) {
+    return '#2b83ba';
+  } else if (value >= 25 && value <= 49) {
+    return '#abdda4';
+  } else if (value >= 50 && value <= 74) {
+    return '#ffffbf';
+  } else if (value >= 75 && value <= 99) {
+    return '#fdae61';
+  } else if (value >= 100) {
+    return '#d7191c';
+  }
+};
+
+const GeoTiffMap = ({ geoTiffUrl }) => {
   const mapRef = useRef();
+  const geoRasterLayerRef = useRef(null);
 
   useEffect(() => {
     const loadGeoTiff = async () => {
-      // Fetch the GeoTIFF file
-      const response = await fetch('./01_2021_CO2_Seattle.tif');
+      const response = await fetch(geoTiffUrl);
       const arrayBuffer = await response.arrayBuffer();
-
-      // Convert it to a GeoRaster
       const geoRaster = await parseGeoraster(arrayBuffer);
 
-      // Create a GeoRasterLayer
+      if (geoRasterLayerRef.current) {
+        mapRef.current.removeLayer(geoRasterLayerRef.current);
+      }
+
       const geoRasterLayer = new GeoRasterLayer({
         georaster: geoRaster,
-        opacity: 0.7,
+        opacity: 0.3,
         pixelValuesToColorFn: (values) => {
-          // Example: Define how to convert pixel values to colors
-          return values[0] === null
-            ? 'transparent'
-            : `rgba(0, 255, 0, ${values[0] / 255})`;
+          const pixelValue = values[0];
+          return getColorFromValue(pixelValue);
         },
       });
 
-      // Add the GeoRasterLayer to the map
       geoRasterLayer.addTo(mapRef.current);
+      geoRasterLayerRef.current = geoRasterLayer;
     };
 
     loadGeoTiff();
-  }, []);
+
+    return () => {
+      if (geoRasterLayerRef.current) {
+        mapRef.current.removeLayer(geoRasterLayerRef.current);
+      }
+    };
+  }, [geoTiffUrl]);
 
   return (
     <MapContainer

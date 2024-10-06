@@ -1,7 +1,96 @@
 // @ts-nocheck
 import 'maplibre-gl/dist/maplibre-gl.css';
 import GeoTiffMap from './GeoTiffMap';
+import { useState, useEffect } from 'react';
+
+const generateTiffUrl = (monthIndex) => {
+  const year = 2021;
+  const month = String(monthIndex + 1).padStart(2, '0');
+  return `./${year}${month}.tif`;
+};
+
+const MapWithMonthSlider = ({ onMonthChange }) => {
+  const [selectedMonthIndex, setSelectedMonthIndex] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [intervalId, setIntervalId] = useState(null);
+
+  const handleSliderChange = (event) => {
+    const index = Number(event.target.value);
+    setSelectedMonthIndex(index);
+    onMonthChange(index);
+  };
+
+  const handlePlay = () => {
+    if (!isPlaying) {
+      setIsPlaying(true);
+      const id = setInterval(() => {
+        setSelectedMonthIndex((prevIndex) => {
+          const nextIndex = (prevIndex + 1) % 12;
+          onMonthChange(nextIndex);
+          return nextIndex;
+        });
+      }, 2000);
+      setIntervalId(id);
+    }
+  };
+
+  const handlePause = () => {
+    setIsPlaying(false);
+    clearInterval(intervalId);
+  };
+
+  useEffect(() => {
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [intervalId]);
+
+  return (
+    <div className="bg-white p-6 rounded-lg shadow-lg">
+      <div className="mb-4">
+        <input
+          type="range"
+          min="0"
+          max="11"
+          value={selectedMonthIndex}
+          onChange={handleSliderChange}
+          className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+        />
+      </div>
+
+      <div className="flex justify-between text-sm text-gray-600">
+        <span>January</span>
+        <span>December</span>
+      </div>
+
+      <div className="flex justify-center mt-4">
+        {isPlaying ? (
+          <button
+            onClick={handlePause}
+            className="bg-red-500 text-white px-4 py-2 rounded"
+          >
+            Pause
+          </button>
+        ) : (
+          <button
+            onClick={handlePlay}
+            className="bg-green-500 text-white px-4 py-2 rounded"
+          >
+            Play
+          </button>
+        )}
+      </div>
+    </div>
+  );
+};
+
 function App() {
+  const [selectedTiffUrl, setSelectedTiffUrl] = useState(generateTiffUrl(0));
+
+  const handleMonthChange = (index) => {
+    setSelectedTiffUrl(generateTiffUrl(index));
+  };
+
   function toggleMenu() {
     const menu = document.querySelector('#mobile-menu');
     menu.classList.toggle('hidden');
@@ -90,9 +179,10 @@ function App() {
 
       <div className="container mx-auto mt-8 px-4 max-w-6xl">
         <h1 className="text-3xl font-bold mb-4 text-center">
-          Get to know your neighborhood!
+          Get to know the CO2 emissions in your neighborhood!
         </h1>
-        <GeoTiffMap />
+        <MapWithMonthSlider onMonthChange={handleMonthChange} />
+        <GeoTiffMap geoTiffUrl={selectedTiffUrl} />
       </div>
     </>
   );
