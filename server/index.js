@@ -24,7 +24,7 @@ Mitigation strategies and solutions to reduce greenhouse gas emissions.
 The relationship between greenhouse gases and extreme weather events.
 Your goal is to deliver clear, evidence-based responses that educate users on these topics, while also providing practical advice on how individuals and communities can contribute to reducing greenhouse gas emissions for a healthier planet.
 `
-app.get('/chatbot', async (req, res) => {
+app.post('/chatbot', async (req, res) => {
     const message = req.body.message;
     const completion = await openai.chat.completions.create({
         model: "gpt-4o",
@@ -35,28 +35,9 @@ app.get('/chatbot', async (req, res) => {
                 content: message,
             },
         ],
-        stream: true,
     });
-    /*const stream = new ReadableStream({
-        async start(controller){
-            const encoder = new TextEncoder()
-            try {
-                for await (const chunk of completion){
-                    const content = chunk.choices[0]?.delta.content
-                    if(content){
-                        const text = encoder.encode(content)
-                        controller.enqueue(text)
-                    }
-                }
-            } catch (error) {
-                controller.error(err)
-            } finally{
-                controller.close()
-            }
-        }
-    })*/
     res.json({
-        response: completion.choices[0].delta.content,
+        response: completion.choices[0].message.content,
     });
 })
 

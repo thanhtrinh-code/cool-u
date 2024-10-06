@@ -1,7 +1,10 @@
 // @ts-nocheck
 import 'maplibre-gl/dist/maplibre-gl.css';
 import GeoTiffMap from './GeoTiffMap';
+import { useState } from 'react';
+import ChatBot from './ChatBot';
 function App() {
+  const [openChat, setOpenChat] = useState(false);
   function toggleMenu() {
     const menu = document.querySelector('#mobile-menu');
     menu.classList.toggle('hidden');
@@ -92,8 +95,19 @@ function App() {
         <h1 className="text-3xl font-bold mb-4 text-center">
           Get to know your neighborhood!
         </h1>
+        
         <GeoTiffMap />
+
       </div>
+      {openChat && <ChatBot/>
+
+      }
+      <div className="z-[1000] fixed bottom-5 right-5" onClick={() => setOpenChat(open => !open)}>
+            <button className="bg-blue-600 text-white font-semibold py-2 px-4 rounded shadow hover:bg-blue-700 transition duration-300 ease-in-out">
+                {!openChat ? "ChatBot" : "Close"}
+            </button>
+      </div>
+      
     </>
   );
 }
