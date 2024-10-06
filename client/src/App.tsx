@@ -163,10 +163,10 @@ function App() {
               <select
                 value={country}
                 onChange={(e) => setCountry(e.target.value)}
-                className="py-2 px-2 text-black bg-gray-200 rounded focus:outline-none focus:border-green-500 transition duration-300"
+                className="py-2 px-4 m-2 text-black bg-gray-200 rounded focus:outline-none focus:border-green-500 transition duration-300"
               >
                 <option value="" disabled>
-                  Select a country...
+                  Select a country
                 </option>
                 {countries.map((countryName, index) => (
                   <option key={index} value={countryName}>
