@@ -55,7 +55,7 @@ const MapWithMonthSlider = ({ onMonthChange }) => {
   }, [intervalId]);
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-lg">
+    <div className="bg-white p-5 rounded-lg shadow-lg">
       <div className="mb-4">
         <input
           type="range"
@@ -72,7 +72,7 @@ const MapWithMonthSlider = ({ onMonthChange }) => {
         <span>December</span>
       </div>
 
-      <div className="flex justify-center mt-4">
+      <div className="flex justify-center">
         {isPlaying ? (
           <button
             onClick={handlePause}
@@ -242,7 +242,7 @@ function App() {
       </nav>
 
       <div className="container mx-auto mt-8 px-4 max-w-6xl">
-        <h1 className="text-3xl font-bold mb-4 text-center">
+        <h1 className="text-2xl font-bold mb-4 text-center">
           Get to know the CO2 emissions in your neighborhood!
         </h1>
         <MapWithMonthSlider onMonthChange={handleMonthChange} />
