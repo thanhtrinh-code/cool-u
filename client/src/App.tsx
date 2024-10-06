@@ -4,6 +4,20 @@ import GeoTiffMap from './GeoTiffMap';
 import { useState, useEffect } from 'react';
 import ChatBot from './ChatBot';
 
+const countries = [
+  'United States',
+  'Canada',
+  'Mexico',
+  'United Kingdom',
+  'Germany',
+  'France',
+  'Australia',
+  'India',
+  'China',
+  'Japan',
+  // Add more countries as needed
+];
+
 const MapWithMonthSlider = ({ onMonthChange }) => {
   const [selectedMonthIndex, setSelectedMonthIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -145,18 +159,21 @@ function App() {
               >
                 {loading ? 'Loading...' : 'Locate Me'}
               </button>
-              <input
+
+              <select
                 value={country}
                 onChange={(e) => setCountry(e.target.value)}
                 className="py-2 px-2 text-black bg-gray-200 rounded focus:outline-none focus:border-green-500 transition duration-300"
-                placeholder="Search for a country..."
-                type="text"
-                autoComplete="off"
-                list="country-suggestions"
-              />
-              <button className="outline-none font-medium px-2 py-2 text-white bg-green-500 rounded hover:bg-green-400 transition duration-300">
-                Enter
-              </button>
+              >
+                <option value="" disabled>
+                  Select a country...
+                </option>
+                {countries.map((countryName, index) => (
+                  <option key={index} value={countryName}>
+                    {countryName}
+                  </option>
+                ))}
+              </select>
             </div>
             <div className="hidden md:flex items-center space-x-3">
               <a
@@ -241,7 +258,7 @@ function App() {
         onClick={() => setOpenChat((open) => !open)}
       >
         <button className="bg-blue-600 text-white font-semibold py-2 px-4 rounded shadow hover:bg-blue-700 transition duration-300 ease-in-out">
-          {!openChat ? 'ChatBot' : 'Close'}
+          {!openChat ? 'Cool U Bot' : 'Close'}
         </button>
       </div>
     </>
