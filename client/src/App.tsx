@@ -5,11 +5,40 @@ import { useState } from 'react';
 import ChatBot from './ChatBot';
 function App() {
   const [openChat, setOpenChat] = useState(false);
+  const [locations, setLocations] = useState([42.6526, -73.7562]);
+  const [loading, setLoading] = useState(false);
+  const [clickLocateMe, setClickLocateMe] = useState(false);
+  const [country, setCountry] = useState('');
+
   function toggleMenu() {
     const menu = document.querySelector('#mobile-menu');
     menu.classList.toggle('hidden');
   }
 
+  function handleLocateUser (e) {
+    e.preventDefault();
+    if ("geolocation" in navigator) {
+      setLoading(true);
+      setClickLocateMe(false);
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          setLocations([latitude, longitude]);
+          setClickLocateMe(true);
+          setLoading(false);
+        },
+        (err) => {
+          console.error(err.message);
+          setLoading(false);
+        }
+      );
+    } else {
+      console.log("Geolocation is not supported by your browser");
+    }
+  }
+  function handleClickEnterCountry () {
+
+  }
   return (
     <>
       <nav className="bg-white shadow-lg">
@@ -24,6 +53,25 @@ function App() {
                   Map
                 </a>
               </div>
+            </div>
+            <div className='md:flex items-center gap-2'>
+              <button onClick={handleLocateUser}
+                className="outline-none font-medium px-2 py-2 text-white bg-green-500 rounded hover:bg-green-400 transition duration-300"
+              >
+                {loading ? "Loading..." : "Locate Me"}
+              </button>
+              <input value={country} onChange={(e) => setCountry(e.target.value)}
+              className="py-2 px-2 text-black bg-gray-200 rounded focus:outline-none focus:border-green-500 transition duration-300"
+              placeholder="Search for a country..."
+              type="text"
+              autoComplete="off"
+              list="country-suggestions"
+              />
+              <button
+                className="outline-none font-medium px-2 py-2 text-white bg-green-500 rounded hover:bg-green-400 transition duration-300"
+              >
+                Enter
+              </button>
             </div>
             <div className="hidden md:flex items-center space-x-3">
               <a
@@ -95,9 +143,7 @@ function App() {
         <h1 className="text-3xl font-bold mb-4 text-center">
           Get to know your neighborhood!
         </h1>
-        
-        <GeoTiffMap />
-
+        <GeoTiffMap locations={locations} clickLocateMe={clickLocateMe}/>
       </div>
       {openChat && <ChatBot/>
 

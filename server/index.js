@@ -1,9 +1,26 @@
+
 require('dotenv').config();
 const express = require('express');
 const Openai = require('openai');
 const cors = require('cors');
+const puppeteer = require('puppeteer');
 const bodyParser = require('body-parser');
 
+const { initializeApp } = require('firebase/app');
+const { getFirestore, collection, doc, setDoc } = require('firebase/firestore');
+const firebaseConfig = {
+    apiKey: "AIzaSyBQtVK865PFTA0xyAkR8PSAs8CeVo3IIdI",
+    authDomain: "cool-u.firebaseapp.com",
+    projectId: "cool-u",
+    storageBucket: "cool-u.appspot.com",
+    messagingSenderId: "1030667178596",
+    appId: "1:1030667178596:web:d08e0396558ddf64f38571",
+    measurementId: "G-007VB31F2G"
+  };
+// Initialize Firebase
+const application = initializeApp(firebaseConfig);
+// Initialize Firestore
+const db = getFirestore(application);
 
 
 const app = express();
@@ -40,6 +57,56 @@ app.post('/chatbot', async (req, res) => {
         response: completion.choices[0].message.content,
     });
 })
+
+app.get('/loadCountry', async (req, res) => {
+    
+    // Launch Puppeteer browser
+    const browser = await puppeteer.launch({
+        headless: true,
+        defaultViewport: null,
+    });
+
+    // Open a new page
+    const page = await browser.newPage();
+    const url = "https://www.worldometers.info/co2-emissions/co2-emissions-by-country/";
+    // Navigate to the provided URL
+    await page.goto(url, {
+        waitUntil: 'domcontentloaded',
+    });
+    // WebScrape data
+    const data = await page.evaluate(() => {
+        const table = document.querySelector('table');
+        const rows = Array.from(table.querySelectorAll('tbody tr'));
+        const data = rows.map(row => {
+            const country = row.querySelector('td:nth-child(2)').innerText;
+            const emissions = row.querySelector('td:nth-child(3)').innerText.replace(',', "");
+            const shareOfWorld = row.querySelector('td:nth-child(7)').innerText;
+            return { country, emissions, shareOfWorld };
+        });
+        return data;
+    });
+
+    // Close the browser
+    await browser.close();
+
+
+    data.forEach(async (row) => {
+        try {
+            // Reference to the country document inside the globalEmissions collection
+            const countryRef = doc(collection(db, 'globalEmissions'), row.country);
+            
+            // Set the data for this country document
+            await setDoc(countryRef, {
+                emissions: row.emissions,
+                shareOfWorld: row.shareOfWorld
+            });
+        } catch (error) {
+            console.error(`Error adding country ${row.country}:`, error);
+        }
+    });
+    res.send('Welcome to the Greenhouse Gas Expert Chatbot API!');
+});
+
 
 
 const port = 3000;
