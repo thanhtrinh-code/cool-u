@@ -117,7 +117,7 @@ app.get('/loadCountry', async (req, res) => {
   res.send('Welcome to the Greenhouse Gas Expert Chatbot API!');
 });
 
-app.get('/getCountryEmissions', async (req, res) => {
+app.post('/getCountryEmissions', async (req, res) => {
   const country = req.body.country;
   const countryRef = doc(collection(db, 'globalEmissions'), country);
   const docSnapshot = await getDoc(countryRef);
@@ -140,7 +140,7 @@ app.get('/getCountryEmissions', async (req, res) => {
     ],
   });
 
-  res.send({
+  res.json({
     emissions: data.emissions,
     shareOfWorld: data.shareOfWorld,
     position: JSON.parse(completion.choices[0].message.content),
