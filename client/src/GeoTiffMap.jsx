@@ -42,7 +42,7 @@ const ColorButtons = () => {
   );
 };
 
-const GeoTiffMap = ({ geoTiffUrl, locations, clickLocateMe }) => {
+const GeoTiffMap = ({ geoTiffUrl, locations, clickLocateMe, data, country }) => {
   const mapRef = useRef();
   const geoRasterLayerRef = useRef(null);
   const initialCenter = [47.608013, -122.335167];
@@ -113,10 +113,13 @@ const GeoTiffMap = ({ geoTiffUrl, locations, clickLocateMe }) => {
             <Popup>
               <div className="popup-content bg-white shadow-lg rounded-md max-w-xs">
                 <h4 className="text-md font-semibold text-green-800 text-center">
-                  U.S. CO2 Emission
+                  {country}
                 </h4>
                 <h3 className="text-lg font-semibold text-green-600 text-center p-4">
-                  40
+                  Annual Emmission of CO2: {data.annualCO2Emissions}
+                </h3>
+                <h3 className="text-lg font-semibold text-green-600 text-center p-4">
+                  Rank: {data.rank}
                 </h3>
               </div>
             </Popup>

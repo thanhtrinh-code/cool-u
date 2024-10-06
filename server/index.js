@@ -144,9 +144,7 @@ app.post('/getCountryEmissions', async (req, res) => {
     position: JSON.parse(completion.choices[0].message.content),
   });
 });
-
 const port = 3000;
-
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });

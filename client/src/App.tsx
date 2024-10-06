@@ -145,6 +145,7 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [clickLocateMe, setClickLocateMe] = useState(false);
   const [country, setCountry] = useState('');
+  const [data, setData] = useState(null);
 
   const handleMonthChange = (index) => {
     setSelectedTiffUrl(generateTiffUrl(index));
@@ -183,17 +184,22 @@ function App() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          state: "South Carolina",
-         }),
+          state: country,
+        }),
     });
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     const data = await response.json();
+    setLocations(data.position);
+    setClickLocateMe(true);
+    setData(data);
   }
   useEffect(() => {
-    handleData();
-  },[])
+    if (country) {
+      handleData();
+    }
+  },[country])
   return (
     <>
       <nav className="bg-white shadow-lg">
@@ -307,6 +313,8 @@ function App() {
           locations={locations}
           clickLocateMe={clickLocateMe}
           geoTiffUrl={selectedTiffUrl}
+          data={data}
+          country = {country}
         />
       </div>
       {openChat && <ChatBot />}
