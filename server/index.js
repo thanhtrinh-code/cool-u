@@ -47,7 +47,7 @@ Your goal is to deliver clear, evidence-based responses that educate users on th
 `;
 
 const CountryPrompt = `
-Provide the latitude and longitude of [country name] in the format and just return
+Provide the latitude and longitude of [state of the United State name] in the format and just return
 [latitude, longitude].
 `;
 app.post('/chatbot', async (req, res) => {
@@ -67,7 +67,7 @@ app.post('/chatbot', async (req, res) => {
   });
 });
 
-app.get('/loadCountry', async (req, res) => {
+app.get('/load', async (req, res) => {
   // Launch Puppeteer browser
   const browser = await puppeteer.launch({
     headless: true,
@@ -77,7 +77,7 @@ app.get('/loadCountry', async (req, res) => {
   // Open a new page
   const page = await browser.newPage();
   const url =
-    'https://www.worldometers.info/co2-emissions/co2-emissions-by-country/';
+    'https://solarpower.guide/solar-energy-insights/states-ranked-carbon-dioxide-emissions';
   // Navigate to the provided URL
   await page.goto(url, {
     waitUntil: 'domcontentloaded',
@@ -87,12 +87,10 @@ app.get('/loadCountry', async (req, res) => {
     const table = document.querySelector('table');
     const rows = Array.from(table.querySelectorAll('tbody tr'));
     const data = rows.map((row) => {
-      const country = row.querySelector('td:nth-child(2)').innerText;
-      const emissions = row
-        .querySelector('td:nth-child(3)')
-        .innerText.replace(',', '');
-      const shareOfWorld = row.querySelector('td:nth-child(7)').innerText;
-      return { country, emissions, shareOfWorld };
+      const rank = row.querySelector('td:nth-child(1)').innerText;
+      const state = row.querySelector('td:nth-child(2)').innerText;
+      const annualCO2Emissions = row.querySelector('td:nth-child(3)').innerText;
+      return { rank, state, annualCO2Emissions };
     });
     return data;
   });
@@ -103,27 +101,27 @@ app.get('/loadCountry', async (req, res) => {
   data.forEach(async (row) => {
     try {
       // Reference to the country document inside the globalEmissions collection
-      const countryRef = doc(collection(db, 'globalEmissions'), row.country);
+      const countryRef = doc(collection(db, 'globalEmissions'), row.state);
 
       // Set the data for this country document
       await setDoc(countryRef, {
-        emissions: row.emissions,
-        shareOfWorld: row.shareOfWorld,
+        rank: row.rank,
+        annualCO2Emissions: row.annualCO2Emissions,
       });
     } catch (error) {
-      console.error(`Error adding country ${row.country}:`, error);
+      console.error(`Error adding country ${row.state}:`, error);
     }
   });
   res.send('Welcome to the Greenhouse Gas Expert Chatbot API!');
 });
 
 app.post('/getCountryEmissions', async (req, res) => {
-  const country = req.body.country;
-  const countryRef = doc(collection(db, 'globalEmissions'), country);
-  const docSnapshot = await getDoc(countryRef);
+  const state = req.body.state;
+  const stateRef = doc(collection(db, 'globalEmissions'), state);
+  const docSnapshot = await getDoc(stateRef);
   if (!docSnapshot.exists()) {
     res.send({
-      error: `Country ${country} not found.`,
+      error: `Country ${state} not found.`,
     });
     return;
   }
@@ -135,14 +133,14 @@ app.post('/getCountryEmissions', async (req, res) => {
       { role: 'system', content: CountryPrompt },
       {
         role: 'user',
-        content: country,
+        content: state,
       },
     ],
   });
 
   res.json({
-    emissions: data.emissions,
-    shareOfWorld: data.shareOfWorld,
+    rank: data.rank,
+    annualCO2Emissions: data.annualCO2Emissions,
     position: JSON.parse(completion.choices[0].message.content),
   });
 });
